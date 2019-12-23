@@ -78,6 +78,14 @@ func (m *Machine) writeArgument(arg, val uint16) {
 	m.registers[arg-modulus] = val
 }
 
+func (m *Machine) writeBool(arg uint16, p bool) {
+	var val uint16
+	if p {
+		val = 1
+	}
+	m.writeArgument(arg, val)
+}
+
 func (m *Machine) step() error {
 	pc := m.pc
 	opCode := opCode(m.peek(pc))
@@ -121,11 +129,7 @@ func (m *Machine) step() error {
 		m.writeArgument(args[0], val)
 		return nil
 	case opEq:
-		var result uint16
-		if args[1] == args[2] {
-			result = 1
-		}
-		m.writeArgument(args[0], result)
+		m.writeBool(args[0], args[1] == args[2])
 		return nil
 	case opJmp:
 		m.pc = args[0]
