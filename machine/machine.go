@@ -61,6 +61,10 @@ func (m *Machine) peek(addr uint16) uint16 {
 	return m.memory[addr]
 }
 
+func (m *Machine) poke(addr, val uint16) {
+	m.memory[addr] = val
+}
+
 func (m *Machine) readArgument() (uint16, error) {
 	val := m.peek(m.pc)
 	m.pc++
@@ -151,6 +155,10 @@ func (m *Machine) step() error {
 		m.writeArgument(args[0], args[1]|args[2])
 	case opNot:
 		m.writeArgument(args[0], (^args[1])&math.MaxInt16)
+	case opRmem:
+		m.writeArgument(args[0], m.peek(args[1]))
+	case opWmem:
+		m.poke(args[0], args[1])
 	case opCall:
 		m.stack = append(m.stack, m.pc)
 		m.pc = args[0]

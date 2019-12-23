@@ -22,6 +22,8 @@ const (
 	opAnd         = 12
 	opOr          = 13
 	opNot         = 14
+	opRmem        = 15
+	opWmem        = 16
 	opCall        = 17
 	opRet         = 18
 	opOut         = 19
@@ -50,6 +52,8 @@ var ops = map[opCode]op{
 	opAnd:  {"and", 3, true},
 	opOr:   {"or", 3, true},
 	opNot:  {"and", 2, true},
+	opRmem: {"rmem", 2, true},
+	opWmem: {"wmem", 2, false}, // false because the argument is a literal address
 	opCall: {"call", 1, false},
 	opRet:  {"ret", 0, false},
 	opOut:  {"out", 1, false},
