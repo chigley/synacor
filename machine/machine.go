@@ -108,6 +108,9 @@ func (m *Machine) step() error {
 	switch opCode {
 	case opHalt:
 		return errHalt
+	case opJmp:
+		m.pc = args[0]
+		return nil
 	case opAdd:
 		m.writeArgument(args[0], (args[1]+args[2])%modulus)
 		return nil
