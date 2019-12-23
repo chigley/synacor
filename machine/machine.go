@@ -139,6 +139,8 @@ func (m *Machine) step() error {
 		if args[0] == 0 {
 			m.pc = args[1]
 		}
+	case opAdd:
+		m.writeArgument(args[0], (args[1]+args[2])%modulus)
 	case opAnd:
 		m.writeArgument(args[0], args[1]&args[2])
 	case opOr:
@@ -153,8 +155,6 @@ func (m *Machine) step() error {
 			return errHalt
 		}
 		m.pc, m.stack = m.stack[len(m.stack)-1], m.stack[:len(m.stack)-1]
-	case opAdd:
-		m.writeArgument(args[0], (args[1]+args[2])%modulus)
 	case opOut:
 		_, err := m.out.Write([]byte{byte(args[0])})
 		return err
