@@ -38,8 +38,6 @@ func New(r io.Reader, opts ...Option) (*Machine, error) {
 		opt(&cfg)
 	}
 
-	prg = []uint16{9, 32768, 32769, 4, 19, 32768, 0}
-
 	return &Machine{
 		memory: prg,
 		out:    cfg.outWriter,
@@ -48,7 +46,6 @@ func New(r io.Reader, opts ...Option) (*Machine, error) {
 }
 
 func (m *Machine) Run() error {
-	m.registers[1] = 61
 	for {
 		if err := m.step(); errors.Is(err, errHalt) {
 			return nil
@@ -110,6 +107,16 @@ func (m *Machine) step() error {
 		return errHalt
 	case opJmp:
 		m.pc = args[0]
+		return nil
+	case opJt:
+		if args[0] > 0 {
+			m.pc = args[1]
+		}
+		return nil
+	case opJf:
+		if args[0] == 0 {
+			m.pc = args[1]
+		}
 		return nil
 	case opAdd:
 		m.writeArgument(args[0], (args[1]+args[2])%modulus)
