@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 
@@ -13,13 +14,26 @@ func main() {
 	verbose := flag.Bool("verbose", false, "enable verbose output")
 	flag.Parse()
 
+	args := flag.Args()
+	if len(args) != 1 {
+		fmt.Fprintf(os.Stderr, "Usage: %s [-verbose] challenge.bin\n", os.Args[0])
+		os.Exit(1)
+	}
+
 	logger, err := logger(*verbose)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer logger.Sync()
 
-	machine, err := machine.New(os.Stdin, machine.Logger(logger))
+	path := args[0]
+	prg, err := os.Open(path)
+	if err != nil {
+		logger.Fatal("opening program", zap.Error(err))
+	}
+	defer prg.Close()
+
+	machine, err := machine.New(prg, machine.Logger(logger))
 	if err != nil {
 		logger.Fatal("creating machine", zap.Error(err))
 	}

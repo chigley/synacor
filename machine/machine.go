@@ -1,6 +1,7 @@
 package machine
 
 import (
+	"bufio"
 	"encoding/binary"
 	"errors"
 	"fmt"
@@ -18,6 +19,8 @@ type Machine struct {
 	registers [8]uint16
 	stack     []uint16
 
+	in     *bufio.Scanner
+	inBuf  []byte
 	out    io.Writer
 	logger *zap.Logger
 }
@@ -33,6 +36,7 @@ func New(r io.Reader, opts ...Option) (*Machine, error) {
 	}
 
 	cfg := Config{
+		inReader:  os.Stdin,
 		logger:    zap.NewNop(),
 		outWriter: os.Stdout,
 	}
@@ -42,6 +46,7 @@ func New(r io.Reader, opts ...Option) (*Machine, error) {
 
 	return &Machine{
 		memory: prg,
+		in:     bufio.NewScanner(cfg.inReader),
 		out:    cfg.outWriter,
 		logger: cfg.logger,
 	}, nil
@@ -167,6 +172,21 @@ func (m *Machine) step() error {
 			return errHalt
 		}
 		m.pc, m.stack = m.stack[len(m.stack)-1], m.stack[:len(m.stack)-1]
+	case opIn:
+		if len(m.inBuf) > 0 {
+			var val uint16
+			val, m.inBuf = uint16(m.inBuf[0]), m.inBuf[1:]
+			m.writeArgument(args[0], val)
+		} else {
+			if m.in.Scan() {
+				bs := append(m.in.Bytes(), '\n')
+				var val uint16
+				val, m.inBuf = uint16(bs[0]), bs[1:]
+				m.writeArgument(args[0], val)
+			} else {
+				return fmt.Errorf("machine: missing input: %w", m.in.Err())
+			}
+		}
 	case opOut:
 		_, err := m.out.Write([]byte{byte(args[0])})
 		return err

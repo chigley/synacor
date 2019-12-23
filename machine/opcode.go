@@ -7,27 +7,28 @@ import (
 type opCode int
 
 const (
-	opHalt opCode = 0
-	opSet         = 1
-	opPush        = 2
-	opPop         = 3
-	opEq          = 4
-	opGt          = 5
-	opJmp         = 6
-	opJt          = 7
-	opJf          = 8
-	opAdd         = 9
-	opMult        = 10
-	opMod         = 11
-	opAnd         = 12
-	opOr          = 13
-	opNot         = 14
-	opRmem        = 15
-	opWmem        = 16
-	opCall        = 17
-	opRet         = 18
-	opOut         = 19
-	opNoop        = 21
+	opHalt opCode = iota
+	opSet
+	opPush
+	opPop
+	opEq
+	opGt
+	opJmp
+	opJt
+	opJf
+	opAdd
+	opMult
+	opMod
+	opAnd
+	opOr
+	opNot
+	opRmem
+	opWmem
+	opCall
+	opRet
+	opOut
+	opIn
+	opNoop
 )
 
 type op struct {
@@ -57,6 +58,7 @@ var ops = map[opCode]op{
 	opCall: {"call", 1, false},
 	opRet:  {"ret", 0, false},
 	opOut:  {"out", 1, false},
+	opIn:   {"in", 1, true},
 	opNoop: {"noop", 0, false},
 }
 

@@ -7,11 +7,18 @@ import (
 )
 
 type Config struct {
+	inReader  io.Reader
 	logger    *zap.Logger
 	outWriter io.Writer
 }
 
 type Option func(c *Config)
+
+func InReader(r io.Reader) Option {
+	return func(c *Config) {
+		c.inReader = r
+	}
+}
 
 func Logger(l *zap.Logger) Option {
 	return func(c *Config) {
