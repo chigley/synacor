@@ -141,6 +141,10 @@ func (m *Machine) step() error {
 		}
 	case opAdd:
 		m.writeArgument(args[0], (args[1]+args[2])%modulus)
+	case opMult:
+		m.writeArgument(args[0], (args[1]*args[2])%modulus)
+	case opMod:
+		m.writeArgument(args[0], args[1]%args[2])
 	case opAnd:
 		m.writeArgument(args[0], args[1]&args[2])
 	case opOr:

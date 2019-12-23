@@ -17,6 +17,8 @@ const (
 	opJt          = 7
 	opJf          = 8
 	opAdd         = 9
+	opMult        = 10
+	opMod         = 11
 	opAnd         = 12
 	opOr          = 13
 	opNot         = 14
@@ -43,6 +45,8 @@ var ops = map[opCode]op{
 	opJt:   {"jt", 2, false},
 	opJf:   {"jf", 2, false},
 	opAdd:  {"add", 3, true},
+	opMult: {"mult", 3, true},
+	opMod:  {"mod", 3, true},
 	opAnd:  {"and", 3, true},
 	opOr:   {"or", 3, true},
 	opNot:  {"and", 2, true},
