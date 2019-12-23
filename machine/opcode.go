@@ -1,6 +1,8 @@
 package machine
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type opCode int
 
@@ -19,47 +21,28 @@ const (
 )
 
 type op struct {
+	label  string
 	args   int
 	writes bool
 }
 
 var ops = map[opCode]op{
-	opSet:  {2, true},
-	opPush: {1, false},
-	opPop:  {1, true},
-	opEq:   {3, true},
-	opJmp:  {1, false},
-	opJt:   {2, false},
-	opJf:   {2, false},
-	opAdd:  {3, true},
-	opOut:  {1, false},
+	opHalt: {"halt", 0, false},
+	opSet:  {"set", 2, true},
+	opPush: {"push", 1, false},
+	opPop:  {"pop", 1, true},
+	opEq:   {"eq", 3, true},
+	opJmp:  {"jmp", 1, false},
+	opJt:   {"jt", 2, false},
+	opJf:   {"jf", 2, false},
+	opAdd:  {"add", 3, true},
+	opOut:  {"out", 1, false},
+	opNoop: {"noop", 0, false},
 }
 
 func (op opCode) String() string {
-	switch op {
-	case opHalt:
-		return "halt"
-	case opSet:
-		return "set"
-	case opPush:
-		return "push"
-	case opPop:
-		return "pop"
-	case opEq:
-		return "eq"
-	case opJmp:
-		return "jmp"
-	case opJt:
-		return "jt"
-	case opJf:
-		return "jf"
-	case opAdd:
-		return "add"
-	case opOut:
-		return "out"
-	case opNoop:
-		return "noop"
-	default:
-		return fmt.Sprintf("UnknownOpCode(%d)", op)
+	if o, ok := ops[op]; ok {
+		return o.label
 	}
+	return fmt.Sprintf("UnknownOpCode(%d)", op)
 }
