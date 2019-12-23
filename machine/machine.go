@@ -110,6 +110,13 @@ func (m *Machine) step() error {
 	case opSet:
 		m.writeArgument(args[0], args[1])
 		return nil
+	case opEq:
+		var result uint16
+		if args[1] == args[2] {
+			result = 1
+		}
+		m.writeArgument(args[0], result)
+		return nil
 	case opJmp:
 		m.pc = args[0]
 		return nil
