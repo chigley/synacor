@@ -145,6 +145,14 @@ func (m *Machine) step() error {
 		m.writeArgument(args[0], args[1]|args[2])
 	case opNot:
 		m.writeArgument(args[0], (^args[1])&math.MaxInt16)
+	case opCall:
+		m.stack = append(m.stack, m.pc)
+		m.pc = args[0]
+	case opRet:
+		if len(m.stack) == 0 {
+			return errHalt
+		}
+		m.pc, m.stack = m.stack[len(m.stack)-1], m.stack[:len(m.stack)-1]
 	case opAdd:
 		m.writeArgument(args[0], (args[1]+args[2])%modulus)
 	case opOut:

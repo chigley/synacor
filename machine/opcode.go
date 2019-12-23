@@ -20,6 +20,8 @@ const (
 	opAnd         = 12
 	opOr          = 13
 	opNot         = 14
+	opCall        = 17
+	opRet         = 18
 	opOut         = 19
 	opNoop        = 21
 )
@@ -44,6 +46,8 @@ var ops = map[opCode]op{
 	opAnd:  {"and", 3, true},
 	opOr:   {"or", 3, true},
 	opNot:  {"and", 2, true},
+	opCall: {"call", 1, false},
+	opRet:  {"ret", 0, false},
 	opOut:  {"out", 1, false},
 	opNoop: {"noop", 0, false},
 }
