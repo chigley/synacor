@@ -77,7 +77,8 @@ func (m *Machine) writeArgument(arg, val uint16) {
 }
 
 func (m *Machine) step() error {
-	opCode := opCode(m.peek(m.pc))
+	pc := m.pc
+	opCode := opCode(m.peek(pc))
 	m.pc++
 
 	var args []uint16
@@ -98,6 +99,7 @@ func (m *Machine) step() error {
 	}
 
 	m.logger.Debug("step",
+		zap.Uint16("pc", pc),
 		zap.String("opcode", opCode.String()),
 		zap.Uint16s("args", args),
 	)
