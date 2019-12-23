@@ -115,6 +115,11 @@ func (m *Machine) step() error {
 	case opPush:
 		m.stack = append(m.stack, args[0])
 		return nil
+	case opPop:
+		var val uint16
+		val, m.stack = m.stack[len(m.stack)-1], m.stack[:len(m.stack)-1]
+		m.writeArgument(args[0], val)
+		return nil
 	case opEq:
 		var result uint16
 		if args[1] == args[2] {

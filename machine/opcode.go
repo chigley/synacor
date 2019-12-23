@@ -8,6 +8,7 @@ const (
 	opHalt opCode = 0
 	opSet         = 1
 	opPush        = 2
+	opPop         = 3
 	opEq          = 4
 	opJmp         = 6
 	opJt          = 7
@@ -25,6 +26,7 @@ type op struct {
 var ops = map[opCode]op{
 	opSet:  {2, true},
 	opPush: {1, false},
+	opPop:  {1, true},
 	opEq:   {3, true},
 	opJmp:  {1, false},
 	opJt:   {2, false},
@@ -41,6 +43,8 @@ func (op opCode) String() string {
 		return "set"
 	case opPush:
 		return "push"
+	case opPop:
+		return "pop"
 	case opEq:
 		return "eq"
 	case opJmp:
