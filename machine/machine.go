@@ -119,45 +119,36 @@ func (m *Machine) step() error {
 		return errHalt
 	case opSet:
 		m.writeArgument(args[0], args[1])
-		return nil
 	case opPush:
 		m.stack = append(m.stack, args[0])
-		return nil
 	case opPop:
 		var val uint16
 		val, m.stack = m.stack[len(m.stack)-1], m.stack[:len(m.stack)-1]
 		m.writeArgument(args[0], val)
-		return nil
 	case opEq:
 		m.writeBool(args[0], args[1] == args[2])
-		return nil
 	case opGt:
 		m.writeBool(args[0], args[1] > args[2])
-		return nil
 	case opJmp:
 		m.pc = args[0]
-		return nil
 	case opJt:
 		if args[0] > 0 {
 			m.pc = args[1]
 		}
-		return nil
 	case opJf:
 		if args[0] == 0 {
 			m.pc = args[1]
 		}
-		return nil
 	case opAdd:
 		m.writeArgument(args[0], (args[1]+args[2])%modulus)
-		return nil
 	case opOut:
 		_, err := m.out.Write([]byte{byte(args[0])})
 		return err
 	case opNoop:
-		return nil
 	default:
 		return fmt.Errorf("machine: unsupported opcode %d", opCode)
 	}
+	return nil
 }
 
 func readProgram(r io.Reader) ([]uint16, error) {
