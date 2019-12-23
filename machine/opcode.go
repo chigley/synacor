@@ -12,6 +12,7 @@ const (
 	opPush        = 2
 	opPop         = 3
 	opEq          = 4
+	opGt          = 5
 	opJmp         = 6
 	opJt          = 7
 	opJf          = 8
@@ -32,6 +33,7 @@ var ops = map[opCode]op{
 	opPush: {"push", 1, false},
 	opPop:  {"pop", 1, true},
 	opEq:   {"eq", 3, true},
+	opGt:   {"gt", 3, true},
 	opJmp:  {"jmp", 1, false},
 	opJt:   {"jt", 2, false},
 	opJf:   {"jf", 2, false},
