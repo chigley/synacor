@@ -139,6 +139,12 @@ func (m *Machine) step() error {
 		if args[0] == 0 {
 			m.pc = args[1]
 		}
+	case opAnd:
+		m.writeArgument(args[0], args[1]&args[2])
+	case opOr:
+		m.writeArgument(args[0], args[1]|args[2])
+	case opNot:
+		m.writeArgument(args[0], (^args[1])&math.MaxInt16)
 	case opAdd:
 		m.writeArgument(args[0], (args[1]+args[2])%modulus)
 	case opOut:
