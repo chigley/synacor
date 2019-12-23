@@ -12,9 +12,11 @@ import (
 )
 
 type Machine struct {
-	memory    []uint16
+	memory []uint16
+	pc     uint16
+
 	registers [8]uint16
-	pc        uint16
+	stack     []uint16
 
 	out    io.Writer
 	logger *zap.Logger
@@ -109,6 +111,9 @@ func (m *Machine) step() error {
 		return errHalt
 	case opSet:
 		m.writeArgument(args[0], args[1])
+		return nil
+	case opPush:
+		m.stack = append(m.stack, args[0])
 		return nil
 	case opEq:
 		var result uint16
