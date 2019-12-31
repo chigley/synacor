@@ -6,7 +6,9 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 
+	"github.com/chigley/synacor/adventure"
 	"github.com/chigley/synacor/machine"
 	"go.uber.org/zap"
 )
@@ -38,6 +40,10 @@ func main() {
 		if err := run(prg, logger); err != nil {
 			logger.Fatal("run", zap.Error(err))
 		}
+	case "search":
+		if err := search(prg, logger); err != nil {
+			logger.Fatal("search", zap.Error(err))
+		}
 	default:
 		usage()
 	}
@@ -51,6 +57,17 @@ func run(prg io.Reader, logger *zap.Logger) error {
 	return fmt.Errorf("running machine: %w", machine.Run())
 }
 
+func search(prg io.Reader, logger *zap.Logger) error {
+	path, err := adventure.FindRuins(prg, logger)
+	if err != nil {
+		return fmt.Errorf("finding ruins: %w", err)
+	}
+	for _, n := range path {
+		fmt.Printf("%s (%s)\n", n.ExitToHere, strings.Join(n.Inv, ", "))
+	}
+	return nil
+}
+
 func logger(verbose bool) (*zap.Logger, error) {
 	if verbose {
 		return zap.NewDevelopment()
@@ -59,6 +76,6 @@ func logger(verbose bool) (*zap.Logger, error) {
 }
 
 func usage() {
-	fmt.Fprintf(os.Stderr, "Usage: %s [-verbose] run challenge.bin\n", os.Args[0])
+	fmt.Fprintf(os.Stderr, "Usage: %s [-verbose] <run|search> challenge.bin\n", os.Args[0])
 	os.Exit(1)
 }
