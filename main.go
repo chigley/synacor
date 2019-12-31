@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"strings"
 
@@ -25,7 +24,8 @@ func main() {
 
 	logger, err := logger(*verbose)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 	defer logger.Sync()
 
