@@ -19,15 +19,20 @@ type Machine struct {
 	registers [8]uint16
 	stack     []uint16
 
-	in     *bufio.Scanner
-	inBuf  []byte
-	out    io.Writer
-	logger *zap.Logger
+	inReader  io.Reader
+	inScanner *bufio.Scanner
+	inBuf     []byte
+	out       io.Writer
+	logger    *zap.Logger
 }
 
 const modulus = math.MaxInt16 + 1
 
-var errHalt = errors.New("machine: halted")
+var (
+	ErrNeedInput = errors.New("machine: need input")
+
+	errHalt = errors.New("machine: halted")
+)
 
 func New(r io.Reader, opts ...Option) (*Machine, error) {
 	prg, err := readProgram(r)
@@ -45,10 +50,11 @@ func New(r io.Reader, opts ...Option) (*Machine, error) {
 	}
 
 	return &Machine{
-		memory: prg,
-		in:     bufio.NewScanner(cfg.inReader),
-		out:    cfg.outWriter,
-		logger: cfg.logger,
+		memory:    prg,
+		inReader:  cfg.inReader,
+		inScanner: bufio.NewScanner(cfg.inReader),
+		out:       cfg.outWriter,
+		logger:    cfg.logger,
 	}, nil
 }
 
@@ -178,13 +184,15 @@ func (m *Machine) step() error {
 			val, m.inBuf = uint16(m.inBuf[0]), m.inBuf[1:]
 			m.writeArgument(args[0], val)
 		} else {
-			if m.in.Scan() {
-				bs := append(m.in.Bytes(), '\n')
+			if m.inScanner.Scan() {
+				bs := append(m.inScanner.Bytes(), '\n')
 				var val uint16
 				val, m.inBuf = uint16(bs[0]), bs[1:]
 				m.writeArgument(args[0], val)
 			} else {
-				return fmt.Errorf("machine: missing input: %w", m.in.Err())
+				m.pc -= 2
+				m.inScanner = bufio.NewScanner(m.inReader)
+				return ErrNeedInput
 			}
 		}
 	case opOut:
