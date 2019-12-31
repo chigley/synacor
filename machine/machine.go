@@ -68,6 +68,31 @@ func (m *Machine) Run() error {
 	}
 }
 
+func (m *Machine) Clone(r io.Reader, w io.Writer) *Machine {
+	memory := make([]uint16, len(m.memory))
+	copy(memory, m.memory)
+
+	stack := make([]uint16, len(m.stack))
+	copy(stack, m.stack)
+
+	inBuf := make([]byte, len(m.inBuf))
+	copy(inBuf, m.inBuf)
+
+	return &Machine{
+		memory: memory,
+		pc:     m.pc,
+
+		registers: m.registers,
+		stack:     stack,
+
+		inReader:  r,
+		inScanner: bufio.NewScanner(r),
+		inBuf:     inBuf,
+		out:       w,
+		logger:    m.logger,
+	}
+}
+
 func (m *Machine) peek(addr uint16) uint16 {
 	return m.memory[addr]
 }
