@@ -207,8 +207,8 @@ func (m *Machine) step() error {
 
 func readProgram(r io.Reader) ([]uint16, error) {
 	var program []uint16
+	bs := make([]byte, 2)
 	for {
-		bs := make([]byte, 2)
 		if _, err := io.ReadFull(r, bs); err == io.EOF {
 			return program, nil
 		} else if err != nil {
