@@ -50,11 +50,11 @@ func main() {
 }
 
 func run(prg io.Reader, logger *zap.Logger) error {
-	machine, err := machine.New(prg, machine.Logger(logger))
+	m, err := machine.New(prg, machine.Logger(logger))
 	if err != nil {
 		return fmt.Errorf("creating machine: %w", err)
 	}
-	return fmt.Errorf("running machine: %w", machine.Run())
+	return fmt.Errorf("running machine: %w", m.Run())
 }
 
 func search(prg io.Reader, logger *zap.Logger) error {
