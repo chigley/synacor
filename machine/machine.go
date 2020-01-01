@@ -66,6 +66,34 @@ func New(r io.Reader, opts ...Option) (*Machine, error) {
 	}, nil
 }
 
+func Load(r io.Reader, opts ...Option) (*Machine, error) {
+	var s state
+	if err := gob.NewDecoder(r).Decode(&s); err != nil {
+		return nil, fmt.Errorf("machine: decoding: %w", err)
+	}
+
+	cfg := Config{
+		inReader:  os.Stdin,
+		logger:    zap.NewNop(),
+		outWriter: os.Stdout,
+	}
+	for _, opt := range opts {
+		opt(&cfg)
+	}
+
+	return &Machine{
+		memory:    s.Memory,
+		pc:        s.PC,
+		registers: s.Registers,
+		stack:     s.Stack,
+
+		inReader:  cfg.inReader,
+		inScanner: bufio.NewScanner(cfg.inReader),
+		out:       cfg.outWriter,
+		logger:    cfg.logger,
+	}, nil
+}
+
 func (m *Machine) Run() error {
 	for {
 		if err := m.step(); errors.Is(err, errHalt) {
