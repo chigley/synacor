@@ -3,6 +3,7 @@ package machine
 import (
 	"bufio"
 	"encoding/binary"
+	"encoding/gob"
 	"errors"
 	"fmt"
 	"io"
@@ -24,6 +25,13 @@ type Machine struct {
 	inBuf     []byte
 	out       io.Writer
 	logger    *zap.Logger
+}
+
+type state struct {
+	Memory    []uint16
+	PC        uint16
+	Registers [8]uint16
+	Stack     []uint16
 }
 
 const modulus = math.MaxInt16 + 1
@@ -91,6 +99,16 @@ func (m *Machine) Clone(r io.Reader, w io.Writer) *Machine {
 		out:       w,
 		logger:    m.logger,
 	}
+}
+
+func (m *Machine) Encode(w io.Writer) error {
+	s := state{
+		Memory:    m.memory,
+		PC:        m.pc,
+		Registers: m.registers,
+		Stack:     m.stack,
+	}
+	return gob.NewEncoder(w).Encode(s)
 }
 
 func (m *Machine) peek(addr uint16) uint16 {
