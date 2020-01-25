@@ -103,6 +103,8 @@ func (n *SearchNode) Neighbours() ([]bfs.Node, error) {
 		return nil, err
 	}
 
+	// TODO: no need to clone for last exit: just re-use the machine we already
+	// have
 	var ret []bfs.Node
 	for _, e := range n.room.exits {
 		newMIO := n.mio.clone()
